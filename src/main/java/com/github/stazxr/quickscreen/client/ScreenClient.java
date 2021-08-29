@@ -3,6 +3,7 @@ package com.github.stazxr.quickscreen.client;
 import com.github.stazxr.quickscreen.util.CommonUtil;
 import com.github.stazxr.quickscreen.util.FileUtil;
 import com.github.stazxr.quickscreen.util.StringUtil;
+import com.melloware.jintellitype.JIntellitype;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -24,7 +25,9 @@ public class ScreenClient {
     // 文件后缀
     private static final String DEFAULT_IMAGE_SUFFIX = ".png";
 
-    // 文件时间戳格式
+    /**
+     * 文件时间戳格式
+     */
     private final SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd_HH_mm_ss");
 
     // 主窗体
@@ -170,7 +173,73 @@ public class ScreenClient {
     }
 
     private void addListener() {
-        
+        int fixMode = JIntellitype.MOD_ALT + JIntellitype.MOD_SHIFT;
+
+        // 第一步: 注册热键,第一个参数表示该热键的标识;第二个参数标识组合键,如果没有,则为0;第三个参数为热键
+        JIntellitype.getInstance().registerHotKey(FUNC_KEY_CUT_ONE, fixMode, 'Y');
+        JIntellitype.getInstance().registerHotKey(FUNC_KEY_START_THREAD, fixMode, 'B');
+        JIntellitype.getInstance().registerHotKey(FUNC_KEY_STOP_THREAD, fixMode, 'E');
+        JIntellitype.getInstance().registerHotKey(FUNC_KEY_EXIT_TOOL, fixMode, 'Q');
+
+        JIntellitype.getInstance().addHotKeyListener(markCode -> {
+            try {
+                switch (markCode) {
+                    case FUNC_KEY_CUT_ONE:
+                        String timeStr = formatter.format(Calendar.getInstance().getTime());
+                        String savePath = getSaveFileForBoard(timeStr);
+                        cutScreen1(savePath, timeStr);
+                        break;
+                    case FUNC_KEY_START_THREAD:
+                        cutOneGroup();
+                        break;
+                    case FUNC_KEY_STOP_THREAD:
+                        stopThread = true;
+                        break;
+                    case FUNC_KEY_EXIT_TOOL:
+                        System.exit(0);
+                        break;
+                    default:
+                        break;
+                }
+
+            } catch (Exception ex) {
+                ex.printStackTrace(System.out);
+            }
+        });
+    }
+
+    private void cutOneGroup() {
+        if (isCuttingByThread) {
+            System.out.println("当前有线程正在抓取,请稍等");
+            return;
+        }
+
+        Runnable runnable = () -> {
+            int count = 0;
+
+            try {
+                isCuttingByThread = true;
+                stopThread = false;
+
+                while (true) {
+                    if (stopThread) {
+                        break;
+                    }
+
+                    CommonUtil.sleep(1000L);
+
+                    String timeStr = formatter.format(Calendar.getInstance().getTime());
+                    String savePath = getSaveFileForThread(timeStr);
+                    cutScreen1(savePath, timeStr);
+
+                    if (count++ > 1000) {
+                        break;
+                    }
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace(System.out);
+            }
+        };
     }
 
     private void initFrame() {
