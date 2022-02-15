@@ -11,7 +11,6 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -23,7 +22,7 @@ public class ScreenClient {
     private static final int DEFAULT_FRAME_HEIGHT = 95;
 
     // 文件后缀
-    private static final String DEFAULT_IMAGE_SUFFIX = ".png";
+    private static final String DEFAULT_IMAGE_SUFFIX = ".jpg";
 
     /**
      * 文件时间戳格式
@@ -223,10 +222,12 @@ public class ScreenClient {
 
                 while (true) {
                     if (stopThread) {
+                        System.out.println("终止线程");
+                        isCuttingByThread = false;
                         break;
                     }
 
-                    CommonUtil.sleep(1000L);
+                    CommonUtil.sleep(3000L);
 
                     String timeStr = formatter.format(Calendar.getInstance().getTime());
                     String savePath = getSaveFileForThread(timeStr);
@@ -240,6 +241,9 @@ public class ScreenClient {
                 ex.printStackTrace(System.out);
             }
         };
+
+        Thread t = new Thread(runnable);
+        t.start();
     }
 
     private void initFrame() {
