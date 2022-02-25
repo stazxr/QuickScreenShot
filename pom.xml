@@ -10,7 +10,7 @@
     <packaging>jar</packaging>
 
     <name>QuickScreen</name>
-    <description>Java桌面快速截屏工具 author Suntao</description>
+    <description>Java桌面快速截屏工具 author Suntao, At https://github.com/stazxr/QuickScreenShot</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

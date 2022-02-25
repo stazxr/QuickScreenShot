@@ -22,7 +22,7 @@ public class ScreenClient {
     private static final int DEFAULT_FRAME_HEIGHT = 95;
 
     // 文件后缀
-    private static final String DEFAULT_IMAGE_SUFFIX = ".jpg";
+    private static final String DEFAULT_IMAGE_SUFFIX = ".png";
 
     /**
      * 文件时间戳格式
@@ -144,7 +144,7 @@ public class ScreenClient {
         // 先隐藏窗口在截屏
         setFrameVisible(false);
 
-        CommonUtil.sleep(100L);
+        CommonUtil.sleep(5L); // 200张一次偏差
         
         openBtn.setText("Ing...");
         
@@ -227,13 +227,13 @@ public class ScreenClient {
                         break;
                     }
 
-                    CommonUtil.sleep(3000L);
+                    CommonUtil.sleep(1500L);
 
                     String timeStr = formatter.format(Calendar.getInstance().getTime());
                     String savePath = getSaveFileForThread(timeStr);
                     cutScreen1(savePath, timeStr);
 
-                    if (count++ > 1000) {
+                    if (count++ > 10000) {
                         break;
                     }
                 }
