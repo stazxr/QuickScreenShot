@@ -54,6 +54,9 @@ public class ScreenClient {
     // 是否终止当前运行线程
     private boolean stopThread = false;
 
+    // 截图保存的基础路径
+    private String threadBaseDir = "";
+
     // 快捷键截图一个
     private static final int FUNC_KEY_CUT_ONE = 1;
 
@@ -128,7 +131,8 @@ public class ScreenClient {
     }
 
     private void openDir() {
-        FileUtil.openFile(savePath);
+        String openDir = isCuttingByThread ? threadBaseDir : savePath;
+        FileUtil.openFile(openDir);
     }
 
     private void cutScreen() {
@@ -229,12 +233,14 @@ public class ScreenClient {
                 isCuttingByThread = true;
                 stopThread = false;
                 textField.setEnabled(false);
+                threadBaseDir = threadDir;
 
                 while (true) {
                     if (stopThread) {
                         System.out.println("终止线程");
                         isCuttingByThread = false;
                         textField.setEnabled(true);
+                        threadBaseDir = "";
                         break;
                     }
 
