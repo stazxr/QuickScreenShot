@@ -11,6 +11,7 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -213,24 +214,34 @@ public class ScreenClient {
             return;
         }
 
+        String threadDir;
+        try {
+            threadDir = ensureThreadPathExist();
+        } catch (IOException ex) {
+            ex.printStackTrace(System.out);
+            return;
+        }
+
         Runnable runnable = () -> {
             int count = 0;
 
             try {
                 isCuttingByThread = true;
                 stopThread = false;
+                textField.setEnabled(false);
 
                 while (true) {
                     if (stopThread) {
                         System.out.println("终止线程");
                         isCuttingByThread = false;
+                        textField.setEnabled(true);
                         break;
                     }
 
                     CommonUtil.sleep(1500L);
 
                     String timeStr = formatter.format(Calendar.getInstance().getTime());
-                    String savePath = getSaveFileForThread(timeStr);
+                    String savePath = getSaveFileForThread(threadDir, timeStr);
                     cutScreen1(savePath, timeStr);
 
                     if (count++ > 10000) {
@@ -284,17 +295,9 @@ public class ScreenClient {
         frame.setLocation(width, height);
     }
 
-    private String getSaveFileForThread(String timeStr) {
-        String txt = textField.getText();
-        if (StringUtil.isNullOrTrimmedEmpty(txt)) {
-            txt = "_NoName";
-        } else {
-            txt = "_".concat(txt.replace(':', ' '));
-        }
-
-        String dir = savePath.concat("ThreadSave\\").concat(txt.trim()).concat("\\");
+    private String getSaveFileForThread(String baseDir, String timeStr) {
         String file = timeStr.concat("_Thread").concat(getSaveFileName());
-        return dir.concat(file);
+        return baseDir.concat(file);
     }
 
     private String getSaveFileForBoard(String timeStr) {
@@ -316,5 +319,22 @@ public class ScreenClient {
         txt = txt.trim();
         txt += DEFAULT_IMAGE_SUFFIX;
         return txt;
+    }
+
+    private String ensureThreadPathExist() throws IOException {
+        String txt = textField.getText().trim();
+        if (StringUtil.isNullOrTrimmedEmpty(txt)) {
+            txt = "_NoName";
+        } else {
+            txt = "_".concat(txt.replace(':', ' '));
+        }
+
+        String dir = savePath.concat("ThreadSave\\").concat(txt.trim()).concat("\\");
+        File file = new File(dir);
+        if (!file.exists() && !file.mkdirs()) {
+            throw new IOException("目录不存在，且创建失败，目录为：" + dir);
+        }
+
+        return dir;
     }
 }

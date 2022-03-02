@@ -3,7 +3,7 @@ package com.github.stazxr.quickscreen;
 import com.github.stazxr.quickscreen.client.ScreenClient;
 
 /**
- * see more at https://github.com/stazxr/QuickScreenShot
+ * 自动截图工具
  *
  * @author SunTao
  * @since 0.0.1
