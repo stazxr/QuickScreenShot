@@ -45,8 +45,8 @@ public class ScreenClient {
     // 设置存储文件的关键字
     private final JTextField textField = new JTextField();
 
-    // 截图保存路径
-    private final String savePath = "D:\\ScreenSave\\";
+    // 截图保存路径（根据自己的电脑做修改）
+    private final String savePath = "D:\\TmpDir\\QuickScreen\\";
 
     // 防止启动多个线程
     private boolean isCuttingByThread = false;
@@ -80,7 +80,7 @@ public class ScreenClient {
 
     /**
      * 设置窗体是否可见
-     * 
+     *
      * @param visible 是否可见
      */
     public void setFrameVisible(boolean visible) {
@@ -141,7 +141,7 @@ public class ScreenClient {
             String saveFile = getSaveFileForFrame(timeStr);
             cutScreen1(saveFile, timeStr);
         });
-        
+
         thread.start();
     }
 
@@ -149,15 +149,16 @@ public class ScreenClient {
         // 先隐藏窗口在截屏
         setFrameVisible(false);
 
-        CommonUtil.sleep(5L); // 200张一次偏差
-        
+        // 200张一次偏差
+        CommonUtil.sleep(5L);
+
         openBtn.setText("Ing...");
-        
+
         savePicture(saveFile);
 
         String btnTip = timeStr.substring("20210602_23_".length());
         openBtn.setText(btnTip);
-        
+
         setFrameVisible(true);
     }
 
